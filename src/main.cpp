@@ -1,4 +1,5 @@
 #include "Parser/ConfigParser.h"
+#include "Sorting/Sorting.h"
 #include "Tape/Tape.h"
 #include <stdexcept>
 #include <string>
@@ -13,8 +14,12 @@ int main(int argc, char **argv) {
 
   ConfigData config_data = ParseConfig();
 
-  Tape input_tape{argv[1], std::stoll(argv[3])};
-  Tape output_tape{argv[2], std::stoll(argv[3])};
+  Tape input_tape{argv[1], std::stoll(argv[3]), config_data};
+  Tape output_tape{argv[2], std::stoll(argv[3]), config_data};
+
+  SortManager sort_manager(config_data);
+
+  sort_manager.Sort(input_tape, output_tape);
 
   return 0;
 }
