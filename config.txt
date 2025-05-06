@@ -1,0 +1,7 @@
+OP_MEM_SIZE 100  // In bytes
+
+READ_DELAY 100  // In miliseconds
+WRITE_DELAY 100  // In miliseconds
+
+SWITCH_TAPE_DELAY 100  // In miliseconds
+MOVE_HEAD_DELAY 100  // In miliseconds
