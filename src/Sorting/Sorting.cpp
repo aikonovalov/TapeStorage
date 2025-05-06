@@ -11,10 +11,7 @@ SortManager::SortManager(const ConfigData &config_data)
       op_mem_(std::make_unique<char[]>(config_data.op_mem_size)),
       mem_layout_(MemoryLayout(op_mem_.get(), config_data.op_mem_size)) {}
 
-void SortManager::BubbleSort(Tape &input_tape, Tape &output_tape) {}
-
-void SortManager::CopyTapes(Tape &tape_from, Tape &tape_to,
-                            ExtendedBuffer &buf) {
+void SortManager::CopyTapes(Tape &tape_from, Tape &tape_to) {
   tape_from.SetHead(0);
   tape_to.SetHead(0);
   for (Index i = 0; i < tape_from.GetSize(); ++i) {

@@ -21,9 +21,7 @@ public:
     Index counter;
   };
 
-  void CopyTapes(Tape &tape_from, Tape &tape_to, ExtendedBuffer &buf);
-
-  void BubbleSort(Tape &input_tape, Tape &output_tape);
+  void CopyTapes(Tape &tape_from, Tape &tape_to);
 
   void LoadToBuffer(ExtendedBuffer &result, Index &curr_load_index,
                     Index end_load_index, Tape &tape);
