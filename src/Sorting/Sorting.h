@@ -21,7 +21,8 @@ public:
     Index counter;
   };
 
-  void CopyTapes(Tape &tape_from, Tape &tape_to);
+  void CopyTapes(Tape &tape_from, Tape &tape_to, ExtendedBuffer &buf_1,
+                 ExtendedBuffer &buf_2);
 
   void LoadToBuffer(ExtendedBuffer &result, Index &curr_load_index,
                     Index end_load_index, Tape &tape);
