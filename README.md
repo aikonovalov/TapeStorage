@@ -46,6 +46,7 @@ TapeStorage/
     └── Sorting/
         ├── Sorting.h        # SortManager class declaration
         └── Sorting.cpp      # MergeSort implementation over Tape
+```
 
 ## Usage
 
@@ -61,6 +62,8 @@ TapeStorage/
    WRITE_DELAY 5           # ms delay per cell write
    SWITCH_TAPE_DELAY 50    # ms delay when switching temporary tapes
    MOVE_HEAD_DELAY 1       # ms delay per head movement
+    
+    ```
 
 3. Run:
    ```bash
