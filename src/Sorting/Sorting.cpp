@@ -11,14 +11,30 @@ SortManager::SortManager(const ConfigData &config_data)
       op_mem_(std::make_unique<char[]>(config_data.op_mem_size)),
       mem_layout_(MemoryLayout(op_mem_.get(), config_data.op_mem_size)) {}
 
-void SortManager::CopyTapes(Tape &tape_from, Tape &tape_to) {
+void SortManager::CopyTapes(Tape &tape_from, Tape &tape_to,
+                            ExtendedBuffer &buf_1, ExtendedBuffer &buf_2) {
   tape_from.SetHead(0);
   tape_to.SetHead(0);
-  for (Index i = 0; i < tape_from.GetSize(); ++i) {
-    auto elem = tape_from.Read();
-    tape_to.Write(elem);
-    tape_from.MoveHeadForward();
-    tape_to.MoveHeadForward();
+
+  buf_1.size = 0;
+  buf_2.size = 0;
+
+  Index curr_load_index = 0;
+  Index end_load_index = tape_from.GetSize();
+
+  LoadToBuffer(buf_1, curr_load_index, end_load_index, tape_from);
+  LoadToBuffer(buf_2, curr_load_index, end_load_index, tape_from);
+  while (buf_1.counter < buf_1.size || buf_2.counter < buf_2.size) {
+    while (buf_1.counter < buf_1.size) {
+      tape_to.Write(buf_1.buf[buf_1.counter++]);
+      tape_to.MoveHeadForward();
+    }
+    while (buf_2.counter < buf_2.size) {
+      tape_to.Write(buf_2.buf[buf_2.counter++]);
+      tape_to.MoveHeadForward();
+    }
+    LoadToBuffer(buf_1, curr_load_index, end_load_index, tape_from);
+    LoadToBuffer(buf_2, curr_load_index, end_load_index, tape_from);
   }
 }
 
@@ -74,20 +90,13 @@ void SortManager::MergeSort(Tape &input_tape, Tape &output_tape) {
   Tape tape_from("tmp/tmp_tape1.dat", input_tape.GetSize(), config_data_);
   Tape tape_to("tmp/tmp_tape2.dat", input_tape.GetSize(), config_data_);
 
-  // TODO: Change code below to CopyTapes
-  input_tape.SetHead(0);
-  tape_from.SetHead(0);
-  for (Index i = 0; i < input_tape.GetSize(); ++i) {
-    auto v = input_tape.Read();
-    tape_from.Write(v);
-    input_tape.MoveHeadForward();
-    tape_from.MoveHeadForward();
-  }
-  //
-
   Index half_cells = max_cells / 2;
   CellType *buf_1 = mem_layout_.allocate<CellType>(half_cells);
   CellType *buf_2 = mem_layout_.allocate<CellType>(half_cells);
+
+  ExtendedBuffer copy_buf_1{buf_1, 0, half_cells, 0};
+  ExtendedBuffer copy_buf_2{buf_2, 0, half_cells, 0};
+  CopyTapes(input_tape, tape_from, copy_buf_1, copy_buf_2);
 
   for (Index step_size = 1; step_size < input_tape.GetSize(); step_size *= 2) {
     tape_to.SetHead(0);
@@ -115,16 +124,7 @@ void SortManager::MergeSort(Tape &input_tape, Tape &output_tape) {
     std::swap(tape_from, tape_to);
   }
 
-  // TODO: Change code below to CopyTapes
-  output_tape.SetHead(0);
-  tape_from.SetHead(0);
-  for (Index i = 0; i < input_tape.GetSize(); ++i) {
-    auto v = tape_from.Read();
-    output_tape.Write(v);
-    tape_from.MoveHeadForward();
-    output_tape.MoveHeadForward();
-  }
-  //
+  CopyTapes(tape_from, output_tape, copy_buf_1, copy_buf_2);
 }
 
 void SortManager::Sort(Tape &input_tape, Tape &output_tape) {
