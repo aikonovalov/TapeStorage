@@ -30,6 +30,9 @@ public:
 
 private:
   void sync();
+  void TapeChangeCheck();
+
+  static Tape *current_tape_;
 
   ConfigData config_data_;
   std::fstream file_;
