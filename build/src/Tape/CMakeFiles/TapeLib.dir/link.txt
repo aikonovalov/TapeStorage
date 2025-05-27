@@ -1,0 +1,2 @@
+/usr/bin/ar qc libTapeLib.a CMakeFiles/TapeLib.dir/Tape.cpp.o
+/usr/bin/ranlib libTapeLib.a
